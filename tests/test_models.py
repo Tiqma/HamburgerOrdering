@@ -22,7 +22,7 @@ class ModelTestCase(unittest.TestCase):
         db.session.commit()
         queried_user = User.query.filter_by(username='testuser').first()
         self.assertIsNotNone(queried_user)
-        self.assertEqual(queried_user.email, 'test@mail.com')
+        self.assertEqual(queried_user.email, 'test@mailx.com')
 
     def tearDown(self):
         """Tear down test context and database"""
