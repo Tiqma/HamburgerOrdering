@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Shop - Hamburger Shop{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Welcome, {{ current_user.full_name }}!</h1>
+
+<div class="row mb-4">
+    <div class="col-md-9">
+        <h2>Available Burgers</h2>
+    </div>
+    <div class="col-md-3 text-end">
+        <a href="{{ url_for('customer.view_cart') }}" class="btn btn-info">View Cart</a>
+    </div>
+</div>
+
+<div class="row">
+    {% for burger in burgers.items %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ burger.name }}</h5>
+                    <p class="card-text text-muted">{{ burger.description[:100] if burger.description else 'Delicious burger' }}</p>
+                    <p class="card-text"><strong>${{ "%.2f"|format(burger.price) }}</strong></p>
+                    
+                    {% if not burger.is_available %}
+                        <div class="alert alert-warning alert-sm mb-2">
+                            <small>Currently Unavailable</small>
+                        </div>
+                    {% endif %}
+
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('customer.burger_detail', burger_id=burger.id) }}" class="btn btn-secondary btn-sm">View Details</a>
+                        {% if burger.is_available %}
+                            <form method="POST" action="{{ url_for('customer.add_to_cart', burger_id=burger.id) }}">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn btn-primary btn-sm w-100">Add to Cart</button>
+                            </form>
+                        {% else %}
+                            <button class="btn btn-secondary btn-sm" disabled>Unavailable</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="col-12">
+            <p class="text-muted">No burgers available yet.</p>
+        </div>
+    {% endfor %}
+</div>
+
+{% if burgers.pages > 1 %}
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if burgers.has_prev %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('customer.dashboard', page=burgers.prev_num) }}">Previous</a>
+            </li>
+        {% endif %}
+
+        {% for page_num in burgers.iter_pages() %}
+            {% if page_num %}
+                {% if page_num == burgers.page %}
+                    <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('customer.dashboard', page=page_num) }}">{{ page_num }}</a></li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+
+        {% if burgers.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('customer.dashboard', page=burgers.next_num) }}">Next</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

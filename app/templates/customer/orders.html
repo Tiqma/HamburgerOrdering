@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}My Orders - Hamburger Shop{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">My Orders</h1>
+
+{% if orders.items %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Order #</th>
+                    <th>Date</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders.items %}
+                    <tr>
+                        <td><strong>#{{ order.id }}</strong></td>
+                        <td>{{ order.created_at.strftime('%b %d, %Y') }}</td>
+                        <td>{{ order.items|length }} item(s)</td>
+                        <td>${{ "%.2f"|format(order.total_price) }}</td>
+                        <td>
+                            <span class="badge 
+                                {% if order.status == 'pending' %}bg-warning
+                                {% elif order.status == 'confirmed' %}bg-info
+                                {% elif order.status == 'preparing' %}bg-primary
+                                {% elif order.status == 'ready' %}bg-success
+                                {% elif order.status == 'delivered' %}bg-success
+                                {% else %}bg-danger{% endif %}">
+                                {{ order.status.capitalize() }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge {% if order.payment_status == 'completed' %}bg-success{% else %}bg-warning{% endif %}">
+                                {{ order.payment_status.capitalize() }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('customer.order_detail', order_id=order.id) }}" class="btn btn-sm btn-info">View</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if orders.pages > 1 %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if orders.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('customer.orders', page=orders.prev_num) }}">Previous</a>
+                </li>
+            {% endif %}
+
+            {% for page_num in orders.iter_pages() %}
+                {% if page_num %}
+                    {% if page_num == orders.page %}
+                        <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="{{ url_for('customer.orders', page=page_num) }}">{{ page_num }}</a></li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+
+            {% if orders.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('customer.orders', page=orders.next_num) }}">Next</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+{% else %}
+    <div class="alert alert-info">
+        <p class="mb-0">You haven't placed any orders yet. <a href="{{ url_for('customer.dashboard') }}">Start shopping</a></p>
+    </div>
+{% endif %}
+{% endblock %}

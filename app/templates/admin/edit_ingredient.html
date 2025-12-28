@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Ingredient - Admin - Hamburger Shop{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Edit Ingredient: {{ ingredient.name }}</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Ingredient Name *</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ ingredient.name }}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Price ($)</label>
+                        <input type="number" class="form-control" id="price" name="price" step="0.01" value="{{ ingredient.price }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg">Save Changes</button>
+                        <a href="{{ url_for('admin.list_ingredients') }}" class="btn btn-secondary btn-lg">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

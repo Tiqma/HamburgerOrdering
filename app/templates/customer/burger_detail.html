@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}{{ burger.name }} - Hamburger Shop{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h1>{{ burger.name }}</h1>
+        <p class="text-muted">{{ burger.description }}</p>
+
+        <h3 class="text-success my-3">${{ "%.2f"|format(burger.price) }}</h3>
+
+        {% if burger.is_available %}
+            <div class="alert alert-success">
+                <strong>In Stock</strong> - Ready to order!
+            </div>
+        {% else %}
+            <div class="alert alert-warning">
+                <strong>Out of Stock</strong> - This item is currently unavailable.
+            </div>
+        {% endif %}
+
+        {% if burger.ingredients %}
+        <div class="mt-4">
+            <h5>Ingredients:</h5>
+            <ul class="list-group">
+                {% for bi in burger.ingredients %}
+                    <li class="list-group-item">
+                        {{ bi.ingredient.name }}
+                        {% if not bi.ingredient.is_available %}
+                            <span class="badge bg-warning">Missing</span>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if burger.is_available %}
+        <form method="POST" action="{{ url_for('customer.add_to_cart', burger_id=burger.id) }}" class="mt-4">
+            <div class="row align-items-end">
+                <div class="col-md-3">
+                    <label for="quantity" class="form-label">Quantity:</label>
+                    <input type="number" id="quantity" name="quantity" class="form-control" value="1" min="1" max="99">
+                </div>
+                <div class="col-md-9">
+                    <button type="submit" class="btn btn-primary btn-lg w-100">Add to Cart</button>
+                </div>
+            </div>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<div class="mt-5">
+    <a href="{{ url_for('customer.dashboard') }}" class="btn btn-secondary">← Back to Shop</a>
+</div>
+{% endblock %}

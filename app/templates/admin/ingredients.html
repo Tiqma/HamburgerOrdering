@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Ingredients - Admin - Hamburger Shop{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1>Manage Ingredients</h1>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('admin.add_ingredient') }}" class="btn btn-success">+ Add New Ingredient</a>
+    </div>
+</div>
+
+{% if ingredients.items %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ingredient in ingredients.items %}
+                    <tr>
+                        <td><strong>{{ ingredient.name }}</strong></td>
+                        <td>${{ "%.2f"|format(ingredient.price) }}</td>
+                        <td>
+                            {% if ingredient.is_available %}
+                                <span class="badge bg-success">Available</span>
+                            {% else %}
+                                <span class="badge bg-danger">Missing</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('admin.edit_ingredient', ingredient_id=ingredient.id) }}" class="btn btn-sm btn-info">Edit</a>
+                            <form method="POST" action="{{ url_for('admin.toggle_ingredient_availability', ingredient_id=ingredient.id) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-sm {% if ingredient.is_available %}btn-warning{% else %}btn-success{% endif %}">
+                                    {% if ingredient.is_available %}Mark Missing{% else %}Mark Available{% endif %}
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ url_for('admin.delete_ingredient', ingredient_id=ingredient.id) }}" style="display: inline;" 
+                                  onsubmit="return confirm('Are you sure?');">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if ingredients.pages > 1 %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if ingredients.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('admin.list_ingredients', page=ingredients.prev_num) }}">Previous</a>
+                </li>
+            {% endif %}
+
+            {% for page_num in ingredients.iter_pages() %}
+                {% if page_num %}
+                    {% if page_num == ingredients.page %}
+                        <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="{{ url_for('admin.list_ingredients', page=page_num) }}">{{ page_num }}</a></li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+
+            {% if ingredients.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('admin.list_ingredients', page=ingredients.next_num) }}">Next</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+{% else %}
+    <div class="alert alert-info">
+        <p class="mb-0">No ingredients yet. <a href="{{ url_for('admin.add_ingredient') }}">Create one</a></p>
+    </div>
+{% endif %}
+{% endblock %}

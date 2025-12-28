@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Hamburger Shop{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Admin Dashboard</h1>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h6 class="card-title">Total Orders</h6>
+                <h2>{{ total_orders }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h6 class="card-title">Pending Orders</h6>
+                <h2>{{ pending_orders }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h6 class="card-title">Total Revenue</h6>
+                <h2>${{ "%.2f"|format(total_revenue) }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h6 class="card-title">Available Burgers</h6>
+                <h2>{{ total_burgers - unavailable_burgers }}/{{ total_burgers }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Burger Management</h5>
+            </div>
+            <div class="card-body">
+                <p>Manage menu items and their availability</p>
+                <a href="{{ url_for('admin.list_burgers') }}" class="btn btn-primary">View Burgers</a>
+                <a href="{{ url_for('admin.add_burger') }}" class="btn btn-success">Add New Burger</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Ingredient Management</h5>
+            </div>
+            <div class="card-body">
+                <p>Mark ingredients as missing or available</p>
+                <a href="{{ url_for('admin.list_ingredients') }}" class="btn btn-primary">View Ingredients</a>
+                <a href="{{ url_for('admin.add_ingredient') }}" class="btn btn-success">Add New Ingredient</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Order Management</h5>
+            </div>
+            <div class="card-body">
+                <p>View and manage customer orders</p>
+                <a href="{{ url_for('admin.list_orders') }}" class="btn btn-primary">View All Orders</a>
+                <a href="{{ url_for('admin.list_orders', status='pending') }}" class="btn btn-warning">Pending Orders</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
