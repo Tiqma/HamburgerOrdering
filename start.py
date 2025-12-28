@@ -7,11 +7,9 @@ import os
 import sys
 from pathlib import Path
 
-# Add project root to path
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 
-# Load environment
 os.environ.setdefault('FLASK_ENV', 'development')
 
 from dotenv import load_dotenv
@@ -23,11 +21,11 @@ from app.models import User, Burger, Ingredient, BurgerIngredient
 def init_database():
     """Initialize database with sample data"""
     app = create_app('development')
-    
+
     with app.app_context():
         print("🗄️  Creating database tables...")
         db.create_all()
-        
+    
         # Create ingredients
         ingredients_data = [
             ('Beef Patty', 3.00),
